@@ -2,7 +2,7 @@ use crate::{models::contact_me_model::ContactMe, repository::mongodb_repo::Mongo
 use mongodb::results::InsertOneResult;
 use rocket::{http::Status, serde::json::Json, State};
 
-#[post("/user", data = "<new_contact_me>")]
+#[post("/contact-me", data = "<new_contact_me>")]
 pub fn create_contact_me(
     db: &State<MongoRepo>,
     new_contact_me: Json<ContactMe>,
