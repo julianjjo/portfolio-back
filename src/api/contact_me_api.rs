@@ -2,7 +2,7 @@ use crate::{models::contact_me_model::ContactMe, repository::mongodb_repo::Mongo
 use mongodb::results::InsertOneResult;
 use rocket::{http::Status, serde::json::Json, State};
 
-#[post("/user", data = "<new_contact_me>")]
+#[post("/contact_me", data = "<new_contact_me>")]
 pub fn create_contact_me(
     db: &State<MongoRepo>,
     new_contact_me: Json<ContactMe>,
@@ -13,9 +13,9 @@ pub fn create_contact_me(
         subject: new_contact_me.subject.to_owned(),
         message: new_contact_me.message.to_owned(),
     };
-    let user_detail = db.create_user(data);
-    match user_detail {
-        Ok(user) => Ok(Json(user)),
-        Err(_) => Err(Status::InternalServerError),
+    let contact_me_detail = db.create_contact_me(data);
+    match contact_me_detail {
+        Ok(contact_me) => Ok(Json(contact_me)),
+        Err(_) => Err(rocket::http::Status::InternalServerError),
     }
 }
