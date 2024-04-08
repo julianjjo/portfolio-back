@@ -19,3 +19,8 @@ pub fn create_contact_me(
         Err(_) => Err(rocket::http::Status::InternalServerError),
     }
 }
+
+#[options("/contact_me")]
+pub fn contact_me_options() -> Status {
+    Status::NoContent
+}
