@@ -1,14 +1,12 @@
 use crate::{models::contact_me_model::ContactMe, repository::mongodb_repo::MongoRepo};
 use mongodb::results::InsertOneResult;
-use rocket::{serde::json::Json, State};
-use rocket_cors::{Guard, Responder};
+use rocket::{http::Status, serde::json::Json, State};
 
 #[post("/contact_me", data = "<new_contact_me>")]
-pub fn create_contact_me<'a>(
-    cors: Guard<'_>,
-    db: &'a State<MongoRepo>,
+pub fn create_contact_me(
+    db: &State<MongoRepo>,
     new_contact_me: Json<ContactMe>,
-) -> Responder<Json<InsertOneResult>>{
+) -> Result<Json<InsertOneResult>, Status> {
     let data = ContactMe {
         id: None,
         email: new_contact_me.email.to_owned(),
@@ -16,6 +14,8 @@ pub fn create_contact_me<'a>(
         message: new_contact_me.message.to_owned(),
     };
     let contact_me_detail = db.create_contact_me(data);
-
-    cors.responder(Json(contact_me_detail.unwrap()))
+    match contact_me_detail {
+        Ok(contact_me) => Ok(Json(contact_me)),
+        Err(_) => Err(rocket::http::Status::InternalServerError),
+    }
 }
