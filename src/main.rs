@@ -1,8 +1,6 @@
 pub mod models;
 pub mod repository;
 pub mod api;
-use rocket_cors::{AllowedHeaders, AllowedOrigins};
-use rocket::http::Method;
 
 #[macro_use]
 extern crate rocket;
