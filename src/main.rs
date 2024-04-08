@@ -4,7 +4,7 @@ pub mod api;
 
 #[macro_use]
 extern crate rocket;
-use api::contact_me_api::create_contact_me;
+use api::contact_me_api::{create_contact_me, contact_me_options};
 use repository::mongodb_repo::MongoRepo;
 use rocket::{get, http::Status, serde::json::Json, http::Header, Response, Request};
 use rocket::fairing::{Fairing, Info, Kind};
@@ -43,6 +43,5 @@ fn rocket() -> _ {
 
     let db = MongoRepo::init();
     rocket::build().attach(CORS).manage(db).register("/", catchers![internal_error])
-        .mount("/", routes![hello])
-        .mount("/", routes![create_contact_me])
+        .mount("/", routes![hello, create_contact_me, contact_me_options])
 }
