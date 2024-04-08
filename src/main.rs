@@ -1,6 +1,8 @@
 pub mod models;
 pub mod repository;
 pub mod api;
+use rocket_cors::{AllowedHeaders, AllowedOrigins};
+use rocket::http::Method;
 
 #[macro_use]
 extern crate rocket;
@@ -20,8 +22,19 @@ fn internal_error(req: &Request) -> String {
 
 #[launch]
 fn rocket() -> _ {
+    let allowed_origins = AllowedOrigins::some_exact(&["https://julian-dev.dev"]);
+
+    // You can also deserialize this
+    let cors = rocket_cors::CorsOptions {
+        allowed_origins,
+        allowed_methods: vec![Method::Get, Method::Post].into_iter().map(From::from).collect(),
+        allowed_headers: AllowedHeaders::some(&["Authorization", "Accept"]),
+        allow_credentials: true,
+        ..Default::default()
+    }
+    .to_cors().unwrap();
     let db = MongoRepo::init();
-    rocket::build().manage(db).register("/", catchers![internal_error])
-        .mount("/", routes![hello])
-        .mount("/", routes![create_contact_me])
+    rocket::build().manage(db).manage(cors)
+        .register("/", catchers![internal_error])
+        .mount("/", routes![hello, create_contact_me])
 }
